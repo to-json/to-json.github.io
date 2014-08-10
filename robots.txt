@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: 
+
+Sitemap: http://to-json.github.io/sitemap.xml 
