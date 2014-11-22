@@ -4,7 +4,7 @@
   <title><![CDATA[beautifully serialized nonsense]]></title>
   <link href="http://to-json.github.io/atom.xml" rel="self"/>
   <link href="http://to-json.github.io/"/>
-  <updated>2014-08-10T15:17:15-05:00</updated>
+  <updated>2014-11-21T23:50:38-06:00</updated>
   <id>http://to-json.github.io/</id>
   <author>
     <name><![CDATA[jason]]></name>
@@ -12,6 +12,170 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Wow, Piston Is Really Fun!]]></title>
+    <link href="http://to-json.github.io/blog/2014/11/21/wow/"/>
+    <updated>2014-11-21T22:50:08-06:00</updated>
+    <id>http://to-json.github.io/blog/2014/11/21/wow</id>
+    <content type="html"><![CDATA[<p>I recently started experimenting with game development libraries, largely
+because the kids in my life have made the connection that:</p>
+
+<ul>
+<li>Games are Programs</li>
+<li>I make Programs</li>
+<li>-> I could make games</li>
+</ul>
+
+
+<p>I&rsquo;ve tried explaining that the sort of programming I do is very boring and
+practical, but they correctly recognize that nothing stops me from changing
+that. So, I&rsquo;ve tried a few things in recent weeks:</p>
+
+<ul>
+<li>Quil - wonderful for art and play, but not my style for games</li>
+<li>RustAllegro - Allegro is delightful and simple but this library is
+a bit undermaintained at the moment, and for getting in to game dev I&rsquo;d
+like something that works predictably and has batteries included</li>
+<li>Rot.js - I will do something with this, but that&rsquo;s for me and my nostalgia.
+It&rsquo;s tougher to get modern kids excited about UTF-8 graphics.</li>
+<li>rust-sdl2 - This seemed like a great fit at first, but then I couldn&rsquo;t
+figure out quickly how to interact with time. While trying to resolve that
+I (re)discovered Piston</li>
+</ul>
+
+
+<p>When I first heard of Piston a few months back, I still felt like Rust was
+gross and full of grunt work like C/C++. However, more recently I&rsquo;ve been
+toying with it to see if anything might pull me into the static typing camp;
+Scala and Haskell were appealing, but they didn&rsquo;t seem to offer enough of a
+performance advantage over clojure to convince my lizard brain to work through
+the tough parts. Go had the performance benefits, but it&rsquo;s type-checker barely
+does anything! Hardly the strong advertisement for type-safety I was seeking.</p>
+
+<p>Rust magically seems to do it all, plus it&rsquo;s still unpopular and pre-1.0 which
+delights my inner hipster.</p>
+
+<p>Piston can use rust-sdl2, but it offers much more than that. It sits on top of
+a variety of rust libraries and provides an opinionated interface to them. It
+is almost <em>too</em> easy to set up an event loop and get a (super) basic engine
+up and running.</p>
+
+<p>For instance, here&rsquo;s the code for a controllable square. You can compile this
+and play with it, as is.</p>
+
+<pre><code class="rust">
+extern crate graphics;
+extern crate input;
+extern crate piston;
+extern crate sdl2_window;
+extern crate opengl_graphics;
+extern crate shader_version;
+extern crate event;
+
+use sdl2_window::Sdl2Window;
+use opengl_graphics::Gl;
+use shader_version::opengl::OpenGL_3_2;
+
+use std::cell::RefCell;
+use piston::{
+    RenderArgs,
+    UpdateArgs
+};
+
+use input::{
+    Button,
+    Keyboard
+};
+
+use graphics::{
+    Context,
+    AddRectangle,
+    AddColor,
+    Draw,
+};
+
+use event::{
+    Events,
+    Window,
+    RenderEvent,
+    PressEvent,
+};
+
+pub struct App {
+    gl: Gl,       // OpenGL drawing backend.
+    rotation: f64, // Rotation for the square.
+    player: Player
+}
+
+pub struct Player {
+    x: f64,
+    y: f64
+}
+
+impl App {
+    fn render&lt;W: Window&gt;(&amp;mut self, _: &amp;mut W, args: &amp;RenderArgs) {
+        let context = &amp;Context::abs(args.width as f64, args.height as f64);
+        context.rgba(0.4,0.4,0.4,1.0).draw(&amp;mut self.gl);
+
+        context
+            .rect(self.player.x, self.player.y, 50.0, 50.0)
+            .rgba(0.8, 0.0, 0.0,1.0)
+            .draw(&amp;mut self.gl);
+    }
+}
+
+fn handleKey(key: Button, app: &amp;mut App) {
+    match key {
+        Keyboard(input::keyboard::Up) =&gt; { app.player.y -= 10.0 }
+        Keyboard(input::keyboard::Down) =&gt; { app.player.y += 10.0 }
+        Keyboard(input::keyboard::Left) =&gt; { app.player.x -= 10.0 }
+        Keyboard(input::keyboard::Right) =&gt; { app.player.x += 10.0 }
+        _ =&gt; {}
+    }
+}
+
+fn main() {
+    let window = Sdl2Window::new(
+        OpenGL_3_2,
+        piston::WindowSettings::default()
+    );
+
+    let mut player = Player { x: 50.0, y: 50.0 };
+    let mut app = App { gl: Gl::new(OpenGL_3_2), rotation: 0.0, player: player };
+
+    let window = RefCell::new(window);
+    for e in Events::new(&amp;window) {
+        e.press(|key| handleKey(key, &amp;mut app));
+        e.render(|r| app.render(window.borrow_mut().deref_mut(), r));
+    }
+}
+</code></pre>
+
+<p>There&rsquo;s a lot going on there, and I&rsquo;ll talk about it more in another post but
+there&rsquo;s kind of super simple examples out there so I wanted to get this up
+out while I&rsquo;m still thinking about it. A controllable square really isn&rsquo;t
+much, but it&rsquo;s an excellent starting point. You get</p>
+
+<ul>
+<li>opening a window</li>
+<li>drawing to the window</li>
+<li>tracking state</li>
+<li>handling input</li>
+<li>color</li>
+<li>using library code</li>
+<li>functions and methods</li>
+</ul>
+
+
+<p>all in 80-some lines. There are games that can be written at this point,
+given a crude collision detection scheme.</p>
+
+<p>Hopefully soon I&rsquo;ll write a walkthrough of that code.</p>
+
+<p>For now, sleep.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[A Brief Introduction]]></title>
