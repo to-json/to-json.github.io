@@ -4,7 +4,7 @@
   <title><![CDATA[beautifully serialized nonsense]]></title>
   <link href="http://to-json.github.io/atom.xml" rel="self"/>
   <link href="http://to-json.github.io/"/>
-  <updated>2014-11-21T23:50:38-06:00</updated>
+  <updated>2014-11-30T17:10:48-06:00</updated>
   <id>http://to-json.github.io/</id>
   <author>
     <name><![CDATA[jason]]></name>
@@ -12,6 +12,23 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[A Followup to 'Piston Is Really Fun']]></title>
+    <link href="http://to-json.github.io/blog/2014/11/30/a-followup-to-piston-is-really-fun/"/>
+    <updated>2014-11-30T17:04:38-06:00</updated>
+    <id>http://to-json.github.io/blog/2014/11/30/a-followup-to-piston-is-really-fun</id>
+    <content type="html"><![CDATA[<p>So apparently I neglected to make a post to accompany the annotations I wrote
+for the code in the Piston is Really Fun post. Here is a link to the repo with
+the annotated code</p>
+
+<p><a href="https://github.com/to-json/piston-annotated-demo" title="piston-annotated-demo">piston-annotated-demo</a></p>
+
+<p>I hope it turns out to be useful to someone. It was fun discovering the basics
+and I look forward to coming up with something more interesting to do with
+this powerful tool.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Wow, Piston Is Really Fun!]]></title>
